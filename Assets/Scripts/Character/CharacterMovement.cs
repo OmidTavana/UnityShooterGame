@@ -15,6 +15,7 @@ public class CharacterMovement : MonoBehaviour
     float MoveSpeed = 0f;
     float ASpeed = 0f;
     float deacclerationASpeed = 0.5f;
+    float rotationSpeed=40f;
     float accelationASpeed = 0.4f;
     // Start is called before the first frame update
     void Start()
@@ -44,19 +45,16 @@ public class CharacterMovement : MonoBehaviour
     void Update()
     {
         Vector2 moveVale=move.ReadValue<Vector2>();
-        Quaternion currentLocation=this.transform.rotation;
         //if move is performed
         if (moveVale.y > 0)
         {
-         Quaternion targetLocation=Quaternion.LookRotation(new Vector3(moveVale.x,0,moveVale.y));
-         this.transform.rotation=Quaternion.Slerp(currentLocation,targetLocation,0.3f);   
             //active run animation
             if (isRunning)
             {
                 if (ASpeed <= 1)
                     ASpeed += accelationASpeed * Time.deltaTime;
 
-                if(MoveSpeed<=6)
+                if(MoveSpeed<=9)
                 MoveSpeed+=(accelationASpeed+2)*Time.deltaTime;
             }
             //active walk animation
@@ -73,7 +71,8 @@ public class CharacterMovement : MonoBehaviour
             if (ASpeed > 0)
                 ASpeed -= deacclerationASpeed * Time.deltaTime;
         }
+        this.transform.Rotate(new  Vector3(0,Input.GetAxis("Mouse X")*rotationSpeed*Time.deltaTime,0));
         animator.SetFloat("Speed", ASpeed);
-        characterController.Move(new Vector3(moveVale.x*MoveSpeed*Time.deltaTime,0,moveVale.y*MoveSpeed*Time.deltaTime));
+        characterController.Move(this.transform.forward*moveVale.y*MoveSpeed*Time.deltaTime);
     }
 }
